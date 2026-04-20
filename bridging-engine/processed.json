@@ -1,0 +1,12 @@
+{
+  "processedLockIds": [
+    "0x21734b19907beb1ad16e09a8cd61ce2ead80f028714063515a9432bba9283ea0",
+    "0xc0f0f464599fcb0a92ee9576a2c18b7e92a8a5fbac99c8dd46ba3c036428c5b0",
+    "0x9fcf3a14b4492c345061d84f6ca4985739d2d023775eff5979e856b39129ce40"
+  ],
+  "processedReleaseIds": [
+    "0x2f7344b91d376e9535df5b7814e88cfc4a6fa6be86031671e43cd4b7283df1ae"
+  ],
+  "lastBlock": 102305968,
+  "destLastBlock": 458184
+}

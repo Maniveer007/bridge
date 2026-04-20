@@ -1,0 +1,48 @@
+[
+  {
+    "type": "function",
+    "name": "lock",
+    "inputs": [
+      { "name": "amount",             "type": "uint256" },
+      { "name": "destinationChainId", "type": "uint256" },
+      { "name": "destinationAddress", "type": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "nonce",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "processedReleases",
+    "inputs": [{ "name": "releaseId", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "TokensLocked",
+    "inputs": [
+      { "name": "sender",             "type": "address", "indexed": true },
+      { "name": "amount",             "type": "uint256", "indexed": false },
+      { "name": "nonce",              "type": "uint256", "indexed": false },
+      { "name": "lockId",             "type": "bytes32", "indexed": true },
+      { "name": "destinationChainId", "type": "uint256", "indexed": false },
+      { "name": "destinationAddress", "type": "address", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "TokensUnlocked",
+    "inputs": [
+      { "name": "recipient",  "type": "address", "indexed": true },
+      { "name": "amount",     "type": "uint256", "indexed": false },
+      { "name": "releaseId",  "type": "bytes32", "indexed": true }
+    ]
+  }
+]

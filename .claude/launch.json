@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bridge-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/mavii/Desktop/Projects/Bridge/frontend",
+      "port": 3001,
+      "autoPort": true
+    }
+  ]
+}

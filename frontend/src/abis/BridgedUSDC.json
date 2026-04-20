@@ -1,0 +1,54 @@
+[
+  {
+    "type": "function",
+    "name": "balanceOf",
+    "inputs": [{ "name": "account", "type": "address" }],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "processedMints",
+    "inputs": [{ "name": "lockId", "type": "bytes32" }],
+    "outputs": [{ "name": "", "type": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "burnNonce",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "burn",
+    "inputs": [
+      { "name": "amount",             "type": "uint256" },
+      { "name": "destinationChainId", "type": "uint256" },
+      { "name": "destinationAddress", "type": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "TokensMinted",
+    "inputs": [
+      { "name": "recipient", "type": "address", "indexed": true },
+      { "name": "amount",    "type": "uint256", "indexed": false },
+      { "name": "lockId",    "type": "bytes32", "indexed": true }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "TokensBurned",
+    "inputs": [
+      { "name": "burner",             "type": "address", "indexed": true },
+      { "name": "amount",             "type": "uint256", "indexed": false },
+      { "name": "burnId",             "type": "bytes32", "indexed": true },
+      { "name": "destinationChainId", "type": "uint256", "indexed": false },
+      { "name": "destinationAddress", "type": "address", "indexed": false }
+    ]
+  }
+]

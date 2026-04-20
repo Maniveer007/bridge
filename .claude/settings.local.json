@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(make sync-env:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(npm install:*)",
+      "Bash(open /Users/mavii/Desktop/Projects/Bridge/frontend/public/)",
+      "Read(//Users/mavii/**)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:amxrpc.link)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
+    ]
+  }
+}

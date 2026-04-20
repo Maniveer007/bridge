@@ -1,0 +1,22 @@
+{
+  "name": "bridge-engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx/esm src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start:compiled": "node dist/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.12.1",
+    "mongodb": "^6.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
+  }
+}
