@@ -19,7 +19,8 @@
       "Bash(node -e ' *)",
       "Bash(kill %1)",
       "Bash(wait)",
-      "Bash(curl -s -X POST https://bsc-mainnet.infura.io/v3/954d00108b41465e90ec9ecb47a2f0b4 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}')"
+      "Bash(curl -s -X POST https://bsc-mainnet.infura.io/v3/954d00108b41465e90ec9ecb47a2f0b4 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}')",
+      "Bash(timeout 15 node --import tsx/esm src/index.ts)"
     ]
   }
 }

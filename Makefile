@@ -28,7 +28,8 @@ FUND_AMOUNT       := 10ether
 FRONTEND_VARS := SOURCE_RPC_URL SOURCE_BACKUP_RPC_URL SOURCE_CHAIN_ID SOURCE_CHAIN_NAME SOURCE_EXPLORER \
                  DEST_RPC_URL DEST_BACKUP_RPC_URL DEST_CHAIN_ID DEST_CHAIN_NAME DEST_EXPLORER \
                  VAULT_ADDRESS USDC_ADDRESS BRIDGED_USDC_ADDRESS USDC_DECIMALS \
-                 SOURCE_LEGACY_TX DEST_LEGACY_TX DEST_GAS_LIMIT
+                 SOURCE_LEGACY_TX DEST_LEGACY_TX DEST_GAS_LIMIT \
+                 API_URL PRIVY_APP_ID
 
 sync-env: $(ROOT_ENV)
 	@echo "==> Syncing root .env to all services ..."
@@ -45,7 +46,6 @@ sync-env: $(ROOT_ENV)
 	@echo "# Auto-generated from root .env — do not edit directly" >  frontend/.env
 	@grep -E "^($(shell echo '$(FRONTEND_VARS)' | tr ' ' '|'))=" $(ROOT_ENV) \
 		| sed 's/^/NEXT_PUBLIC_/'                                 >> frontend/.env
-	@grep -E "^MONGODB_URI=" $(ROOT_ENV)                          >> frontend/.env
 
 	@echo "  ✓ smartcontracts/.env"
 	@echo "  ✓ bridging-engine/.env"
