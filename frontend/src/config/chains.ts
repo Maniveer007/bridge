@@ -1,5 +1,5 @@
 import { defineChain, http, fallback, custom } from "viem";
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { createConfig } from "@privy-io/wagmi";
 
 // ─── RPC URLs ────────────────────────────────────────────────────────────────
 
@@ -91,7 +91,7 @@ export const USDC_DECIMALS: number = parseInt(
   10
 );
 
-// ─── Wagmi + RainbowKit config ────────────────────────────────────────────────
+// ─── Wagmi + Privy config ─────────────────────────────────────────────────────
 // For legacy chains, use legacyTransport (strips baseFeePerGas from blocks).
 // For normal chains, use the standard http transport with fallback.
 
@@ -109,11 +109,8 @@ const destTransport = DEST_LEGACY_TX
       http(DEST_BACKUP, { retryCount: 3, retryDelay: 500 }),
     ]);
 
-export const wagmiConfig = getDefaultConfig({
-  appName:   "USDC Bridge",
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "b56e18d47c72ab683b10814fe9495694",
+export const wagmiConfig = createConfig({
   chains:    [sourceChain, destChain] as any,
-  ssr:       true,
   transports: {
     [sourceChain.id]: sourceTransport,
     [destChain.id]:   destTransport,

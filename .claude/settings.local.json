@@ -10,7 +10,16 @@
       "Read(//Users/mavii/**)",
       "mcp__Claude_Preview__preview_start",
       "WebFetch(domain:amxrpc.link)",
-      "mcp__Claude_in_Chrome__tabs_context_mcp"
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(npm info *)",
+      "Bash(node -e \"const v=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const arr=JSON.parse\\(v\\); console.log\\(arr.slice\\(-5\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(node -e \"const p = require\\('@privy-io/react-auth'\\); console.log\\(Object.keys\\(p\\).filter\\(k => ['PrivyProvider','usePrivy'].includes\\(k\\)\\)\\)\")",
+      "Bash(node -e \"const p = require\\('@privy-io/wagmi'\\); console.log\\(Object.keys\\(p\\).filter\\(k => ['WagmiProvider','createConfig'].includes\\(k\\)\\)\\)\")",
+      "Bash(node -e \"const p=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\)\\); console.log\\(JSON.stringify\\({exports: p.exports, main: p.main, module: p.module}, null, 2\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(curl -s -X POST https://bsc-mainnet.infura.io/v3/954d00108b41465e90ec9ecb47a2f0b4 -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}')"
     ]
   }
 }

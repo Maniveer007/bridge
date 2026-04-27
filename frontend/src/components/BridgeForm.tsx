@@ -2,12 +2,11 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { usePrivy } from "@privy-io/react-auth";
 import { formatUnits } from "viem";
 import { useBridge, useReverseBridge } from "../hooks/useBridge";
 import { useChainSwitch } from "../hooks/useChainSwitch";
 import { useTransactionHistory } from "../hooks/useTransactionHistory";
-import { useResumePendingTxs } from "../hooks/useResumePendingTxs";
 import { TxStatus, ReverseTxStatus } from "./TxStatus";
 import { TransactionHistory } from "./TransactionHistory";
 import { sourceChain, destChain, USDC_DECIMALS } from "../config/chains";
@@ -68,13 +67,13 @@ export function BridgeForm() {
   const { address, isConnected } = useAccount();
 
   const [direction, setDirection] = useState<"forward" | "reverse">("forward");
-  const { isCorrectChain, isSwitching, switchError, targetChainName } = useChainSwitch(direction);
+  const { login, logout, authenticated } = usePrivy();
+  const { isCorrectChain, isSwitching, switchError, targetChainName, switchToTarget } = useChainSwitch(direction);
 
   const { bridge, reset: resetForward, setMinted, state: fwdState, usdcBalance } = useBridge();
   const { reverseBridge, reset: resetReverse, setUnlocked, state: revState, busdcBalance } = useReverseBridge();
 
-  const { txs, addTx, updateTx, clearHistory } = useTransactionHistory();
-  useResumePendingTxs(txs, updateTx);
+  const { txs, addTx, updateTx, clearHistory } = useTransactionHistory(address);
 
   const [amount, setAmount] = useState("");
   const currentTempId = useRef<string | null>(null);
@@ -111,12 +110,12 @@ export function BridgeForm() {
     if (fwdState.status === "locking" || fwdState.status === "locked") {
       updateTx(tempId, {
         approveTxHash: fwdState.approveTxHash,
-        lockTxHash: fwdState.lockTxHash,
-        lockId: fwdState.lockId,
-        status: "pending",
+        lockTxHash:    fwdState.lockTxHash,
+        txId:          fwdState.lockId,   // link to the relayer's transactions record
+        status:        "pending",
       });
     } else if (fwdState.status === "minted") {
-      updateTx(tempId, { lockTxHash: fwdState.lockTxHash, lockId: fwdState.lockId, status: "minted" });
+      updateTx(tempId, { lockTxHash: fwdState.lockTxHash, txId: fwdState.lockId, status: "minted" });
       currentTempId.current = null;
     } else if (fwdState.status === "error") {
       updateTx(tempId, { status: "failed", error: fwdState.error });
@@ -130,9 +129,9 @@ export function BridgeForm() {
     const tempId = currentTempId.current;
     if (!tempId || direction !== "reverse") return;
     if (revState.status === "burned") {
-      updateTx(tempId, { burnTxHash: revState.burnTxHash, burnId: revState.burnId, status: "pending" });
+      updateTx(tempId, { burnTxHash: revState.burnTxHash, txId: revState.burnId, status: "pending" });
     } else if (revState.status === "unlocked") {
-      updateTx(tempId, { burnTxHash: revState.burnTxHash, burnId: revState.burnId, status: "unlocked" });
+      updateTx(tempId, { burnTxHash: revState.burnTxHash, txId: revState.burnId, status: "unlocked" });
       currentTempId.current = null;
     } else if (revState.status === "error") {
       updateTx(tempId, { status: "failed", error: revState.error });
@@ -151,8 +150,8 @@ export function BridgeForm() {
       addTx({
         id: tempId, tempId, timestamp: Date.now(), amount,
         direction: "forward", status: "pending",
-        approveTxHash: null, lockTxHash: null, lockId: null,
-        burnTxHash: null, burnId: null,
+        approveTxHash: null, lockTxHash: null, txId: null,
+        burnTxHash: null, mintTxHash: null, unlockTxHash: null,
         sourceChain: sourceChain.name, destChain: destChain.name, error: null,
       });
       await bridge(amount);
@@ -160,8 +159,8 @@ export function BridgeForm() {
       addTx({
         id: tempId, tempId, timestamp: Date.now(), amount,
         direction: "reverse", status: "pending",
-        approveTxHash: null, lockTxHash: null, lockId: null,
-        burnTxHash: null, burnId: null,
+        approveTxHash: null, lockTxHash: null, txId: null,
+        burnTxHash: null, mintTxHash: null, unlockTxHash: null,
         sourceChain: sourceChain.name, destChain: destChain.name, error: null,
       });
       await reverseBridge(amount);
@@ -217,11 +216,25 @@ export function BridgeForm() {
             <h2 className="text-xl font-bold text-white">Bridge</h2>
             <p className="text-xs mt-0.5" style={{ color: "rgba(212,175,55,0.5)" }}>1 USDC = 1 bUSDC · No fees</p>
           </div>
-          <ConnectButton
-            accountStatus="address"
-            chainStatus="icon"
-            showBalance={false}
-          />
+          {authenticated && address ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="text-xs font-semibold px-3 py-2 rounded-xl transition-opacity hover:opacity-80"
+              style={{ background: "rgba(212,175,55,0.10)", border: "1px solid rgba(212,175,55,0.22)", color: "#D4AF37" }}
+            >
+              {address.slice(0, 6)}…{address.slice(-4)}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={login}
+              className="text-xs font-semibold px-3 py-2 rounded-xl transition-opacity hover:opacity-80"
+              style={{ background: "linear-gradient(135deg, #B8860B, #FFD700)", color: "#000000" }}
+            >
+              Connect
+            </button>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -358,33 +371,25 @@ export function BridgeForm() {
           {/* ── CTA button ── */}
           <div className="px-6 pb-6 pt-3 flex flex-col gap-3">
             {!isConnected ? (
-              <ConnectButton.Custom>
-                {({ openConnectModal }) => (
-                  <button
-                    type="button"
-                    onClick={openConnectModal}
-                    className="w-full py-4 rounded-2xl font-bold text-sm transition-opacity"
-                    style={{ background: "linear-gradient(135deg, #B8860B, #FFD700)", color: "#000000" }}
-                  >
-                    Connect Wallet
-                  </button>
-                )}
-              </ConnectButton.Custom>
+              <button
+                type="button"
+                onClick={login}
+                className="w-full py-4 rounded-2xl font-bold text-sm transition-opacity"
+                style={{ background: "linear-gradient(135deg, #B8860B, #FFD700)", color: "#000000" }}
+              >
+                Connect Wallet
+              </button>
             ) : !isCorrectChain ? (
               <>
-                <ConnectButton.Custom>
-                  {({ openChainModal }) => (
-                    <button
-                      type="button"
-                      onClick={openChainModal}
-                      disabled={isSwitching}
-                      className="w-full py-4 rounded-2xl font-bold text-sm transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
-                      style={{ background: "linear-gradient(135deg, #B8860B, #FFD700)", color: "#000000" }}
-                    >
-                      {isSwitching ? <><Spinner /> Switching…</> : `Switch to ${targetChainName}`}
-                    </button>
-                  )}
-                </ConnectButton.Custom>
+                <button
+                  type="button"
+                  onClick={switchToTarget}
+                  disabled={isSwitching}
+                  className="w-full py-4 rounded-2xl font-bold text-sm transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  style={{ background: "linear-gradient(135deg, #B8860B, #FFD700)", color: "#000000" }}
+                >
+                  {isSwitching ? <><Spinner /> Switching…</> : `Switch to ${targetChainName}`}
+                </button>
                 {switchError && (
                   <p className="text-xs text-red-400 text-center">{switchError.message}</p>
                 )}
@@ -444,7 +449,7 @@ export function BridgeForm() {
       </div>
 
       {/* ── Transaction history (below card) ── */}
-      <TransactionHistory txs={txs} onClear={clearHistory} />
+      <TransactionHistory txs={txs} onUpdate={updateTx} onClear={clearHistory} />
     </div>
   );
 }

@@ -4,22 +4,21 @@
  */
 
 export const BRIDGE_VAULT_ABI = [
-  // Events
+  // ── Events ──
   "event TokensLocked(address indexed sender, uint256 amount, uint256 nonce, bytes32 indexed lockId, uint256 destinationChainId, address destinationAddress)",
   "event TokensUnlocked(address indexed recipient, uint256 amount, bytes32 indexed releaseId)",
-  // Write
+  // ── Relayer write ──
   "function unlock(address recipient, uint256 amount, bytes32 releaseId) external",
-  // Read
+  // ── Read ──
   "function nonce() view returns (uint256)",
   "function processedReleases(bytes32 releaseId) view returns (bool)",
 ] as const;
 
 export const BRIDGED_USDC_ABI = [
-  // Events
+  // ── Events ──
   "event TokensBurned(address indexed burner, uint256 amount, bytes32 indexed burnId, uint256 destinationChainId, address destinationAddress)",
-  // Write
+  // ── Relayer write ──
   "function mint(address recipient, uint256 amount, bytes32 lockId) external",
-  // Read
+  // ── Read ──
   "function processedMints(bytes32 lockId) view returns (bool)",
-  "function burnNonce() view returns (uint256)",
 ] as const;

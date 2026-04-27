@@ -27,5 +27,6 @@ export function useChainSwitch(direction: "forward" | "reverse" = "forward") {
     isSwitching:     isPending,
     switchError:     error,
     targetChainName: targetChain.name,
+    switchToTarget:  () => switchChain({ chainId: targetChain.id }),
   };
 }

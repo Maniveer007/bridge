@@ -2,27 +2,32 @@
 
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
-import { wagmiConfig } from "../config/chains";
+import { WagmiProvider } from "@privy-io/wagmi";
+import { PrivyProvider } from "@privy-io/react-auth";
+import { wagmiConfig, sourceChain, destChain } from "../config/chains";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <WagmiProvider config={wagmiConfig}>
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+      config={{
+        defaultChain: sourceChain,
+        supportedChains: [sourceChain, destChain],
+        appearance: {
+          theme: "dark",
+          accentColor: "#D4AF37",
+        },
+        loginMethods: ["wallet"],
+        embeddedWallets: { ethereum: { createOnLogin: "off" } },
+      }}
+    >
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor:          "#D4AF37",
-            accentColorForeground: "#000000",
-            borderRadius:         "large",
-          })}
-        >
+        <WagmiProvider config={wagmiConfig}>
           {children}
-        </RainbowKitProvider>
+        </WagmiProvider>
       </QueryClientProvider>
-    </WagmiProvider>
+    </PrivyProvider>
   );
 }
